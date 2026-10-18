@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今天吃什麼？｜美食轉盤</title>
+<style>
+:root{
+  --bg:#f6f1eb;
+  --bg-soft:#fbf8f4;
+  --surface:#fffdfa;
+  --surface-2:#f8f2eb;
+  --text:#5f4a3a;
+  --muted:#9b887a;
+  --line:#e7ddd2;
+  --line-2:#efe6dc;
+  --accent:#cba78a;
+  --accent-deep:#b68c6f;
+  --accent-soft:#efe3d7;
+  --shadow:0 18px 40px rgba(108,84,63,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--text);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(232,220,206,.55), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(240,228,216,.7), transparent 24%),
+    linear-gradient(180deg,#faf6f1 0%,#f5efe8 100%);
+  min-height:100vh;
+}
+.shell{max-width:940px;margin:auto;padding:34px 18px 72px}
+header{text-align:center;margin:18px auto 30px}
+.icons{font-size:24px;letter-spacing:16px;margin-bottom:12px;filter:saturate(.75)}
+.eyebrow{
+  font-size:12px;
+  letter-spacing:.38em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+h1{
+  font-family:"Noto Serif TC","PMingLiU","Times New Roman",serif;
+  font-size:clamp(34px,6vw,58px);
+  margin:16px 0 12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  color:#6a5140;
+}
+header p{
+  color:var(--muted);
+  margin:0;
+  line-height:1.9;
+  font-size:17px;
+}
+.panel{
+  background:rgba(255,253,250,.88);
+  border:1px solid rgba(231,221,210,.9);
+  border-radius:34px;
+  box-shadow:var(--shadow);
+  padding:clamp(24px,5vw,40px);
+  backdrop-filter:blur(8px);
+}
+.hidden{display:none!important}
+h2{
+  font-family:"Noto Serif TC","PMingLiU","Times New Roman",serif;
+  font-size:30px;
+  margin:0 0 10px;
+  text-align:center;
+  letter-spacing:.03em;
+}
+.hint{text-align:center;color:var(--muted);margin:0 0 28px;line-height:1.85}
+.meal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.meal{
+  min-height:182px;
+  border:1px solid var(--line);
+  border-radius:26px;
+  background:linear-gradient(180deg,#fffdfa 0%,#faf6f1 100%);
+  color:var(--text);
+  cursor:pointer;
+  font:inherit;
+  transition:.25s ease;
+  box-shadow:0 10px 24px rgba(124,98,77,.05);
+}
+.meal:hover,.meal:focus-visible{
+  transform:translateY(-5px);
+  border-color:var(--accent);
+  box-shadow:0 18px 26px rgba(124,98,77,.12);
+}
+.meal .emoji{display:block;font-size:52px;margin-bottom:14px}
+.meal strong{font-size:20px;font-weight:800}
+.meal small{display:block;color:var(--muted);margin-top:8px;letter-spacing:.08em}
+.center{text-align:center}
+.wheel-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(220px,.75fr);gap:34px;align-items:center}
+.wheel-wrap{position:relative;max-width:470px;width:100%;aspect-ratio:1;margin:auto}
+.wheel-wrap:after{
+  content:"";
+  position:absolute;
+  inset:-10px;
+  border:1px solid rgba(216,198,182,.8);
+  border-radius:50%;
+  pointer-events:none;
+  box-shadow:0 8px 24px rgba(114,89,68,.12), inset 0 0 0 8px rgba(255,250,245,.75);
+}
+#wheel{width:100%;height:100%;border-radius:50%;display:block;transition:transform 5s cubic-bezier(.12,.83,.12,1)}
+.pointer{
+  position:absolute;z-index:2;top:-18px;left:50%;transform:translateX(-50%);
+  width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:34px solid var(--accent-deep);
+  filter:drop-shadow(0 4px 8px rgba(91,67,49,.18));
+}
+.wheel-center{
+  position:absolute;inset:43%;border:7px solid rgba(255,248,240,.95);border-radius:50%;
+  background:linear-gradient(180deg,#d7b49a 0%,#bc9173 100%);
+  box-shadow:0 6px 16px rgba(114,83,60,.18);
+  pointer-events:none
+}
+.side h3{font-family:"Noto Serif TC","PMingLiU","Times New Roman",serif;font-size:24px;margin:0 0 12px;letter-spacing:.02em}
+.side p{line-height:1.9;color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 24px}
+.pill{
+  padding:7px 12px;border-radius:999px;background:var(--accent-soft);font-size:12px;
+  color:#7a6555;border:1px solid rgba(214,193,174,.55)
+}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{
+  border:0;border-radius:999px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;
+  transition:.22s ease;line-height:1.4;letter-spacing:.02em;
+}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.primary{
+  background:linear-gradient(180deg,#d4b39a 0%,#bf9677 100%);
+  color:#fff;
+  box-shadow:0 10px 18px rgba(179,141,113,.25);
+}
+.secondary{background:#f4ede5;color:var(--text);border:1px solid var(--line)}
+.outline{background:#fffdfa;border:1px solid var(--line);color:var(--text)}
+.result{
+  background:linear-gradient(180deg,#fffaf5 0%,#f9f1e8 100%);
+  border:1px solid #eadbcb;padding:16px;border-radius:20px;margin:22px 0;
+}
+.result small{color:var(--muted)}
+.result strong{display:block;font-size:26px;margin-top:7px;font-family:"Noto Serif TC","PMingLiU","Times New Roman",serif}
+.restaurants{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:26px 0}
+.restaurant{
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:22px;
+  background:linear-gradient(180deg,#fffdfa 0%,#faf6f1 100%);
+  box-shadow:0 10px 22px rgba(124,98,77,.05);
+}
+.restaurant h3{margin:0 0 10px;font-size:21px;line-height:1.5;letter-spacing:.01em}
+.restaurant p{font-size:14px;line-height:1.85;color:#876f5d;margin:0 0 14px}
+.price,.level{
+  font-size:13px;background:var(--accent-soft);padding:7px 12px;border-radius:999px;display:inline-block;
+  color:#7b6553;border:1px solid rgba(214,193,174,.55);font-weight:700
+}
+.price{margin-right:8px}
+.chosen{
+  max-width:520px;margin:22px auto;background:linear-gradient(180deg,#fffaf4 0%,#f7ede4 100%);
+  border:1px solid #e2d4c5;border-radius:26px;padding:24px;text-align:center;animation:pop .3s ease-out;
+  box-shadow:0 14px 28px rgba(124,98,77,.08)
+}
+.chosen strong{font-size:28px;display:block;margin-top:8px;font-family:"Noto Serif TC","PMingLiU","Times New Roman",serif}
+.chosen p{margin:10px 0 0;line-height:1.85;color:#846d5c}
+@keyframes pop{from{transform:scale(.95);opacity:.3}to{transform:scale(1);opacity:1}}
+footer{text-align:center;color:#a18b7d;font-size:12px;margin-top:26px;line-height:1.8}
+button:focus-visible{outline:3px solid #ccb095;outline-offset:3px}
+@media(max-width:670px){
+  .meal-grid{grid-template-columns:1fr;gap:10px}
+  .meal{min-height:98px;display:flex;align-items:center;justify-content:center;gap:16px}
+  .meal .emoji{margin:0;font-size:39px}
+  .meal small{margin-top:4px}
+  .wheel-layout{grid-template-columns:1fr}
+  .wheel-wrap{max-width:360px}
+  .side{text-align:center}
+  .pills,.actions{justify-content:center}
+  .restaurants{grid-template-columns:1fr}
+  .shell{padding-top:22px}
+  .panel{border-radius:26px}
+}
+
+</style>
+</head>
+<body>
+<main class="shell">
+<header><div class="icons" aria-hidden="true">🍙 🍞 🍮</div><div class="eyebrow">FOOD LUCKY WHEEL</div><h1>今天吃什麼？</h1><p>選擇困難的時候，讓淡雅質感的美食轉盤替你做決定 ♡</p></header>
+<section id="home" class="panel"><h2>今天想吃哪一餐？</h2><p class="hint">先選個時段，再把下一餐交給命運吧！</p><div class="meal-grid"><button class="meal" data-meal="breakfast"><span class="emoji">🥪</span><span><strong>早餐</strong><small>BREAKFAST</small></span></button><button class="meal" data-meal="lunch"><span class="emoji">🍱</span><span><strong>午餐</strong><small>LUNCH</small></span></button><button class="meal" data-meal="dinner"><span class="emoji">🍜</span><span><strong>晚餐</strong><small>DINNER</small></span></button></div></section>
+<section id="play" class="panel hidden"><h2 id="mealTitle">午餐轉盤</h2><p class="hint">準備好了嗎？看看今天的美食緣分！</p><div class="wheel-layout"><div class="wheel-wrap"><canvas id="wheel" width="800" height="800" role="img" aria-label="美食抽選轉盤"></canvas><div class="pointer" aria-hidden="true"></div><div class="wheel-center" aria-hidden="true"></div></div><div class="side"><h3>今天的候選美食</h3><p>轉盤會隨機決定料理類型。不喜歡抽到的結果，可以將它排除再抽一次。</p><div id="pills" class="pills"></div><div class="actions"><button id="spin" class="btn primary">開始轉動 ✨</button></div><div id="result" class="result hidden" aria-live="polite"><small>命運決定了……</small><strong id="foodResult"></strong></div><div id="resultActions" class="actions hidden"><button id="accept" class="btn primary">就吃這個！</button><button id="reject" class="btn secondary">不想吃，刪掉重抽</button></div><p id="lastHint" class="hint hidden" style="margin:13px 0">已經沒有其他選項了，接受結果或重新開始吧！</p><div class="actions" style="margin-top:18px"><button class="btn outline" data-restart>↩ 重新開始</button></div></div></div></section>
+<section id="recommend" class="panel hidden"><h2 id="recommendTitle">美食推薦</h2><p class="hint">找到想吃的料理啦！再來選一間店吧。</p><div id="restaurants" class="restaurants"></div><div class="center"><button id="pick" class="btn primary">幫我選一間 ♡</button><div id="chosen" class="chosen hidden" aria-live="polite"><div>🎉 今天就吃這間！</div><strong id="chosenName"></strong><p id="chosenNote"></p></div><div class="actions" style="justify-content:center;margin-top:22px"><button id="backToWheel" class="btn secondary">↩ 回到轉盤</button><button data-restart class="btn outline">重新開始</button></div></div></section>
+<footer>Made with ♡　·　餐廳特色供選餐參考；價位標籤為預設分類，實際售價、供應品項及營業時間請依各門市公告為準。</footer>
+</main>
+<script>
+'use strict';
+const foodData={"蛋餅":[["早安美芝城","除了熟悉的台式蛋餅，這裡的麵包也很有特色！像是使用湯種麵糰製作的朝食吐司，以及低溫發酵的漢堡麵包，想吃傳統早餐或換個口味都很適合。","約 NT$65／人","平價"],["弘爺漢堡","喜歡傳統台式早餐的話，可以來弘爺！蛋餅、吐司、漢堡都有，還能依自己的喜好搭配飲料，想吃一份簡單又有飽足感的早餐很方便。","約 NT$60／人","平價"],["拉亞漢堡","想吃點不一樣的早餐嗎？拉亞除了蛋餅，還有貝果、芝加哥堡和美式早午餐盤，選擇比一般早餐店更有變化。","約 NT$75／人","平價"]],"飯糰":[["永和豆漿大王","想吃傳統中式早餐，可以考慮永和豆漿大王！飯糰搭配豆漿、燒餅或油條，就是熟悉的台式早餐組合。不過各地同名店菜單可能不同。","約 NT$65／人","平價"],["傳香飯糰","喜歡飯糰但又想換個口味？傳香把傳統糯米加入蓬萊米，並提供白米、紫米等不同選擇，配料也能自由搭配，不用每次都吃一樣的組合。","價格依門市為準","平價"],["飯丸屋","想試試跟台式飯糰不一樣的口味嗎？飯丸屋主打沖繩飯糰，用海苔包著米飯、煎蛋和午餐肉等配料，吃起來帶有日式風味。","價格依門市為準","平價"]],"三明治":[["路易莎咖啡","不只咖啡，路易莎也有不少輕食可以選！想簡單吃個三明治，搭配一杯拿鐵或紅茶，就能享受一頓輕鬆的早餐。","約 NT$90／人","平價"],["星巴克","想邊喝咖啡邊吃早餐，可以試試星巴克！除了各式咖啡，還有焗烤法式里肌三明治等鹹食，喜歡熱三明治的人可以參考看看。","約 NT$125／人","平價"],["拉亞漢堡","想吃點不一樣的早餐嗎？拉亞除了蛋餅，還有貝果、芝加哥堡和美式早午餐盤，選擇比一般早餐店更有變化。","約 NT$75／人","平價"],["早安美芝城","除了熟悉的台式蛋餅，這裡的麵包也很有特色！像是使用湯種麵糰製作的朝食吐司，以及低溫發酵的漢堡麵包，想吃傳統早餐或換個口味都很適合。","約 NT$70／人","平價"]],"漢堡":[["麥當勞","早餐想吃漢堡，可以試試麥當勞的滿福堡系列！英式瑪芬搭配雞蛋、起司或豬肉，再配上一塊薯餅，是很有代表性的速食早餐組合。","約 NT$90／人","平價"],["摩斯漢堡","想吃點不一樣的漢堡，可以試試摩斯！最有特色的就是用米飯取代麵包的米漢堡，還有帶有日式風味的醬料，和一般美式漢堡很不一樣。","約 NT$120／人","平價"],["漢堡王","喜歡牛肉漢堡的話，漢堡王很值得考慮！招牌華堡使用火烤牛肉，搭配番茄、洋蔥、酸黃瓜和生菜，特色就是那股火烤香氣。","約 NT$145／人","平價"]],"吐司":[["早安美芝城","除了熟悉的台式蛋餅，這裡的麵包也很有特色！像是使用湯種麵糰製作的朝食吐司，以及低溫發酵的漢堡麵包，想吃傳統早餐或換個口味都很適合。","約 NT$65／人","平價"],["弘爺漢堡","喜歡傳統台式早餐的話，可以來弘爺！蛋餅、吐司、漢堡都有，還能依自己的喜好搭配飲料，想吃一份簡單又有飽足感的早餐很方便。","約 NT$65／人","平價"],["拉亞漢堡","想吃點不一樣的早餐嗎？拉亞除了蛋餅，還有貝果、芝加哥堡和美式早午餐盤，選擇比一般早餐店更有變化。","約 NT$70／人","平價"]],"火鍋":[["石二鍋","喜歡石頭鍋的香氣可以試試這間！除了招牌石頭鍋，還有涮涮鍋可以選，吃完再來杯檸檬冬瓜冰沙，是很有特色的搭配。","約 NT$380／人","中高價位"],["錢都日式涮涮鍋","想吃一鍋暖呼呼的火鍋，可以試試錢都！以昆布、柴魚和大骨熬製的湯底是它的特色，搭配肉片與蔬菜，很適合喜歡傳統涮涮鍋的人。","約 NT$430／人","中高價位"],["築間幸福鍋物","喜歡自己搭配火鍋食材的話，可以考慮築間！除了選擇喜歡的湯底和肉品，還有蔬食自助吧，能自由挑選想吃的蔬菜和其他配料。","約 NT$520／人","高價位"],["涮乃葉","想大口吃肉又喜歡蔬菜吃到飽嗎？涮乃葉主打日式涮涮鍋吃到飽，可以自己挑選蔬菜、搭配肉片慢慢涮，享受自己組合火鍋的樂趣。","約 NT$550／人","高價位"]],"燒肉":[["燒肉LIKE","一個人突然想吃燒肉也沒問題！燒肉LIKE主打一人燒肉，每個人都有自己的烤爐，還能選擇喜歡的肉品和份量，不用揪團也能享受烤肉。","約 NT$390／人","中高價位"],["牛角日本燒肉專門店","想吃日式燒肉可以考慮牛角！除了不同部位的牛肉、豬肉，也有多種醬料和搭配選擇，能自己控制烤肉的熟度，享受現烤肉片的香氣。","約 NT$750／人","高價位"],["乾杯燒肉居酒屋","喜歡熱鬧的燒肉氣氛，可以試試乾杯！除了和牛等肉品，也以有趣的居酒屋互動活動聞名，讓聚餐不只是吃燒肉，還多了一點歡樂感。","約 NT$1100／人","高價位"]],"義大利麵":[["薩莉亞","想吃義大利麵又不想花太多錢，可以考慮薩莉亞！除了義大利麵，還有披薩、焗烤和佛卡夏，能一次搭配好幾種義式餐點。","約 NT$160／人","平價"],["NU PASTA","喜歡奶油、青醬或番茄口味的義大利麵嗎？NU PASTA有不同醬汁與主食搭配，還有焗飯和創意小點，想吃西式餐點時可以考慮。","約 NT$260／人","中高價位"],["薄多義","除了義大利麵，也想來點披薩嗎？薄多義以義式料理為主，能搭配不同口味的義大利麵和披薩，特別適合想一次品嚐兩種義式主食的時候。","約 NT$350／人","中高價位"]],"日式料理":[["すき家 SUKIYA","想快速吃上一碗熱騰騰的牛丼，可以試試すき家！以牛肉、洋蔥和特製醬汁搭配白飯，還能依喜好選擇不同份量與配料。","約 NT$150／人","平價"],["吉野家","喜歡經典日式牛丼的話，可以考慮吉野家！牛肉和洋蔥經過醬汁燉煮，再鋪在熱白飯上，簡單卻很有日式家常料理的味道。","約 NT$170／人","平價"],["爭鮮迴轉壽司","想吃壽司又不想一次點太多嗎？爭鮮可以直接從迴轉台挑選喜歡的壽司，想吃幾盤就拿幾盤，很適合想一次品嚐不同口味的人。","約 NT$300／人","中高價位"],["藏壽司","來這裡不只是吃壽司，還能順便玩扭蛋！每投入五個盤子就有一次抽獎機會，讓吃飯也多了一點驚喜。","約 NT$400／人","中高價位"]],"韓式料理":[["涓豆腐","想吃熱騰騰的韓式豆腐煲嗎？涓豆腐以嫩豆腐煲為招牌，搭配韓式小菜與其他韓國料理，很適合喜歡濃郁韓式湯鍋的人。","約 NT$490／人","中高價位"],["北村豆腐家","喜歡韓屋氛圍和韓式料理，可以試試這間！除了熱騰騰的豆腐煲，還有可以續加的韓式小菜，餐後甚至有霜淇淋。","約 NT$430／人","中高價位"],["起家雞 Cheogajip","想吃韓式炸雞的話，可以試試起家雞！除了經典洋釀炸雞，還有黑醬、起司等不同口味，也能選擇半半炸雞，一次享受兩種風味。","價格依門市及份量為準","中高價位"]],"麵食":[["八方雲集","不只鍋貼和水餃，八方雲集也有麵食可以選！從乾麵、湯麵到牛肉麵，搭配酸辣湯或其他小菜，就能組合成一頓熟悉的中式餐點。","約 NT$130／人","平價"],["三商巧福","突然想喝一碗熱熱的牛肉湯，可以考慮三商巧福！招牌牛肉麵有原汁、半筋半肉等不同選擇，喜歡台式牛肉麵的人可以試試。","約 NT$210／人","中高價位"],["丸亀製麵","喜歡口感Q彈的烏龍麵嗎？丸亀主打讚岐烏龍麵，可以選擇不同湯底與吃法，再搭配喜歡的配菜，簡單又有日式風味。","約 NT$165／人","平價"]],"速食":[["麥當勞","想吃經典速食，可以考慮麥當勞！除了大麥克、麥香雞，還有麥克雞塊、薯條等熟悉的餐點，想吃漢堡或炸物都能找到選擇。","約 NT$180／人","平價"],["肯德基","想吃酥脆炸雞可以考慮肯德基！招牌咔啦脆雞以香料醃製，搭配經典蛋撻更是熟悉的組合，喜歡炸雞和甜點的人可以一次滿足。","約 NT$210／人","中高價位"],["摩斯漢堡","想吃點不一樣的漢堡，可以試試摩斯！最有特色的就是用米飯取代麵包的米漢堡，還有帶有日式風味的醬料，和一般美式漢堡很不一樣。","約 NT$220／人","中高價位"],["漢堡王","喜歡牛肉漢堡的話，漢堡王很值得考慮！招牌華堡使用火烤牛肉，搭配番茄、洋蔥、酸黃瓜和生菜，特色就是那股火烤香氣。","約 NT$225／人","中高價位"]],"水餃鍋貼":[["八方雲集","喜歡現煎鍋貼或水餃嗎？八方雲集有招牌高麗菜、韭菜、韓式辣味等不同口味，可以照食量點幾顆，再搭配湯品或小菜。","約 NT$130／人","平價"],["四海遊龍","喜歡鍋貼外皮煎得香香的口感嗎？四海遊龍主打鍋貼和水餃，有高麗菜、韓式辣味等不同口味，再搭配一碗湯就是簡單的一餐。","約 NT$130／人","平價"],["五花馬水餃館","想吃傳統中式麵點可以考慮五花馬！除了水餃，也有自製雞蛋麵、菠菜麵及各種蒸籠料理，喜歡麵食的人可以換著口味吃。","約 NT$180／人","平價"]]};
+const breakfast=['蛋餅','飯糰','三明治','漢堡','吐司'];
+const mainMeals=['火鍋','燒肉','義大利麵','日式料理','韓式料理','麵食','速食','水餃鍋貼'];
+const colorPalette=['#f9d0b8','#fce3b0','#d9e5c4','#f2cdd4','#d0e2e3','#e7d4f0','#f4dcb9','#d9dec1'];
+const $=id=>document.getElementById(id);const canvas=$('wheel'),ctx=canvas.getContext('2d');
+let items=[],meal='',picked=null,spinning=false,rotation=0;
+function show(page){for(const id of ['home','play','recommend'])$(id).classList.toggle('hidden',id!==page);window.scrollTo({top:0,behavior:'smooth'})}
+function updatePills(){$('pills').replaceChildren(...items.map(x=>{const span=document.createElement('span');span.className='pill';span.textContent=x;return span}))}
+function drawWheel(){const w=canvas.width,r=w/2;ctx.clearRect(0,0,w,w);const n=items.length;if(!n)return;const step=2*Math.PI/n;items.forEach((item,i)=>{const angle=-Math.PI/2+i*step;ctx.beginPath();ctx.moveTo(r,r);ctx.arc(r,r,r-10,angle,angle+step);ctx.closePath();ctx.fillStyle=colorPalette[i%colorPalette.length];ctx.fill();ctx.strokeStyle='#faf5ee';ctx.lineWidth=6;ctx.stroke();ctx.save();ctx.translate(r,r);ctx.rotate(angle+step/2);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#47372d';ctx.font=`bold ${n>7?35:42}px "Microsoft JhengHei",sans-serif`;ctx.fillText(item,r*.61,0,r*.66);ctx.restore()})}
+function reset(){items=[];meal='';picked=null;spinning=false;rotation=0;canvas.style.transition='none';canvas.style.transform='rotate(0deg)';void canvas.offsetWidth;canvas.style.transition='transform 5s cubic-bezier(.12,.83,.12,1)';$('result').classList.add('hidden');$('resultActions').classList.add('hidden');$('lastHint').classList.add('hidden');$('chosen').classList.add('hidden');$('spin').disabled=false;show('home')}
+function chooseMeal(m){meal=m;items=(m==='breakfast'?breakfast:mainMeals).slice();picked=null;rotation=0;canvas.style.transition='none';canvas.style.transform='rotate(0deg)';void canvas.offsetWidth;canvas.style.transition='transform 5s cubic-bezier(.12,.83,.12,1)';$('mealTitle').textContent=({breakfast:'早餐',lunch:'午餐',dinner:'晚餐'})[m]+'吃什麼？';$('result').classList.add('hidden');$('resultActions').classList.add('hidden');$('lastHint').classList.add('hidden');$('spin').disabled=false;updatePills();drawWheel();show('play')}
+function spin(){if(spinning||picked!==null||!items.length)return;spinning=true;$('spin').disabled=true;$('result').classList.add('hidden');$('resultActions').classList.add('hidden');$('lastHint').classList.add('hidden');const index=Math.floor(Math.random()*items.length),step=360/items.length;const current=((rotation%360)+360)%360;const target=((360-(index+.5)*step)%360+360)%360;const delta=((target-current+360)%360)+360*6;rotation+=delta;canvas.style.transform=`rotate(${rotation}deg)`;let finished=false;const finish=()=>{if(finished)return;finished=true;spinning=false;picked=items[index];$('foodResult').textContent=picked;$('result').classList.remove('hidden');$('resultActions').classList.remove('hidden');$('lastHint').classList.toggle('hidden',items.length!==1);$('reject').disabled=items.length===1};canvas.addEventListener('transitionend',function done(e){if(e.propertyName==='transform'){canvas.removeEventListener('transitionend',done);finish()}},{once:false});setTimeout(finish,5200)}
+function reject(){if(spinning||picked===null||items.length<2)return;items=items.filter(x=>x!==picked);picked=null;updatePills();drawWheel();$('result').classList.add('hidden');$('resultActions').classList.add('hidden');$('spin').disabled=false;spin()}
+function accept(){if(spinning||picked===null)return;const list=foodData[picked]||[];$('recommendTitle').textContent='今天吃「'+picked+'」！';const container=$('restaurants');container.replaceChildren(...list.map(([name,description,price,level])=>{const card=document.createElement('article');card.className='restaurant';const h=document.createElement('h3');h.textContent='🍴 '+name;const p=document.createElement('p');p.textContent=description;const span=document.createElement('span');span.className='price';span.textContent=price;const badge=document.createElement('span');badge.className='level';badge.textContent=level;card.append(h,p,badge);return card}));$('chosen').classList.add('hidden');show('recommend')}
+function pickRestaurant(){const list=foodData[picked]||[];if(!list.length)return;const [name,description,price,level]=list[Math.floor(Math.random()*list.length)];$('chosenName').textContent=name;$('chosenNote').textContent=description;$('chosen').classList.remove('hidden')}
+document.querySelectorAll('[data-meal]').forEach(b=>b.addEventListener('click',()=>chooseMeal(b.dataset.meal)));document.querySelectorAll('[data-restart]').forEach(b=>b.addEventListener('click',reset));$('spin').addEventListener('click',spin);$('reject').addEventListener('click',reject);$('accept').addEventListener('click',accept);$('pick').addEventListener('click',pickRestaurant);$('backToWheel').addEventListener('click',()=>show('play'));
+</script>
+</body>
+</html>
